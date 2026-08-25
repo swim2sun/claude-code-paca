@@ -1,0 +1,6 @@
+{
+  "name": "paca",
+  "description": "Paca channel for Claude Code — connect a persistent Claude Code session to a Paca acp-type agent (tasks, @mentions, chat, automation) and act back via the Paca MCP tools.",
+  "version": "0.1.0",
+  "keywords": ["paca", "project-management", "agent", "channel", "mcp"]
+}

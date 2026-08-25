@@ -1,7 +1,13 @@
 {
-  "name": "paca-channel",
+  "name": "claude-code-paca",
+  "version": "0.1.0",
+  "description": "Paca channel for Claude Code — bridge a persistent CC session to a Paca acp-type agent (B2), plus the Paca MCP tools.",
+  "license": "MIT",
   "type": "module",
-  "private": true,
+  "scripts": {
+    "start": "bun install --no-summary && bun paca-channel.ts",
+    "start-mcp": "bun install --no-summary && bun paca-mcp-launch.ts"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "zod": "^4.4.3"

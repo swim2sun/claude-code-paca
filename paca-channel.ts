@@ -19,15 +19,26 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { homedir } from "os";
+import { readFileSync, existsSync } from "fs";
+import { join } from "path";
 
-const SERVER = process.env.PACA_SERVER || "http://192.168.15.161:8099";
-const AGENT_ID = process.env.PACA_AGENT_ID || "";
-const TOKEN = process.env.PACA_BRIDGE_TOKEN || "";
+// Credentials: env wins (used by manual/env-based setups like a bot's own
+// .mcp.json); otherwise fall back to the file written by /paca:configure.
+export const CRED_PATH = join(homedir(), ".claude", "channels", "paca", "credentials.json");
+function loadCreds(): { server?: string; agentId?: string; bridgeToken?: string } {
+  try { if (existsSync(CRED_PATH)) return JSON.parse(readFileSync(CRED_PATH, "utf8")); } catch {}
+  return {};
+}
+const cred = loadCreds();
+const SERVER = process.env.PACA_SERVER || cred.server || "https://paca.xswl.top:1314";
+const AGENT_ID = process.env.PACA_AGENT_ID || cred.agentId || "";
+const TOKEN = process.env.PACA_BRIDGE_TOKEN || cred.bridgeToken || "";
+const log = (s: string) => process.stderr.write(`[paca-channel] ${s}\n`);
 if (!AGENT_ID || !TOKEN) {
-  process.stderr.write("[paca-channel] FATAL: set PACA_AGENT_ID and PACA_BRIDGE_TOKEN\n");
+  log(`FATAL: no agent credentials. Set PACA_AGENT_ID + PACA_BRIDGE_TOKEN in env, or run /paca:configure to write ${CRED_PATH}`);
   process.exit(1);
 }
-const log = (s: string) => process.stderr.write(`[paca-channel] ${s}\n`);
 
 // ── MCP channel server ────────────────────────────────────────────────────────
 const mcp = new Server(
