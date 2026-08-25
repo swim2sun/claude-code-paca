@@ -30,7 +30,12 @@ claude --dangerously-load-development-channels plugin:paca@swim2sun-plugins --da
   `--dangerously-load-development-channels` flag is required (research preview).
 - `--dangerously-skip-permissions` is recommended so the agent doesn't prompt for
   every edit/command — those prompts only appear in the terminal, not in Paca.
-- Stack with other channels: add `--channels plugin:discord@claude-plugins-official`.
+- **Stacking with other channels (Discord, etc.):** put them all under the **same**
+  `--dangerously-load-development-channels` flag, e.g.
+  `claude --dangerously-load-development-channels plugin:paca@swim2sun-plugins plugin:discord@claude-plugins-official --dangerously-skip-permissions`.
+  ⚠️ On some Claude Code versions (observed on 2.1.x), `--dangerously-load-development-channels`
+  **overrides** `--channels` — a channel passed via `--channels` alongside the dev flag
+  silently won't load (its server never spawns). Keep every channel under the one dev flag.
 
 ### Credentials
 `/paca:configure` writes `~/.claude/channels/paca/credentials.json`:
