@@ -28,6 +28,9 @@ const env: Record<string, string> = { ...process.env as Record<string, string>, 
 if (projectId) env.PACA_PROJECT_ID = projectId;
 
 // stdio inherited → @paca-ai/paca-mcp speaks MCP to Claude Code directly through us.
-const child = spawn("npx", ["-y", "@paca-ai/paca-mcp"], { stdio: "inherit", env });
+// Run under bun (`--bun` forces the bun runtime even past the package's node
+// shebang). Node v22.4 throws ERR_REQUIRE_ESM inside a jsdom transitive dep
+// (html-encoding-sniffer -> @exodus/bytes); bun handles the ESM/CJS interop.
+const child = spawn("bunx", ["--bun", "@paca-ai/paca-mcp"], { stdio: "inherit", env });
 child.on("exit", (code) => process.exit(code ?? 0));
 child.on("error", (e) => { process.stderr.write(`[paca-mcp-launch] failed to start: ${e}\n`); process.exit(1); });
